@@ -4,7 +4,7 @@ const ICS_URL =
   'https://outlook.office365.com/owa/calendar/5479c4c9aea84aa1bfc94f2f7f04b948@griffith.edu.au/a34e5d521f8a46539b841149bb8873fb1914797712579501563/calendar.ics'
 
 let cachedIcs: { text: string; fetchedAt: number } | null = null
-const CACHE_TTL = 1000 * 60 * 60 // 1 hour
+const CACHE_TTL = 1000 * 60 * 1 // 1 minute
 
 export const Route = createFileRoute('/griffiths-medical-calendar-2026')({
   server: {
