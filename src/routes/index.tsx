@@ -4,11 +4,13 @@ import { Copy, Check, Github } from 'lucide-solid'
 
 export const Route = createFileRoute('/')({ component: App })
 
+const ENDPOINT = '/ics'
+
 function App() {
   const [copiedPathway, setCopiedPathway] = createSignal<number | null>(null)
 
   const copyLink = (pathway: number) => {
-    const url = `${import.meta.env.VITE_SITE_URL}/griffiths-medical-calendar-2026?pathway=${pathway}`
+    const url = `${import.meta.env.VITE_SITE_URL}${ENDPOINT}?pathway=${pathway}&year=2026&cohort=sc`
     navigator.clipboard.writeText(url)
     setCopiedPathway(pathway)
     setTimeout(() => setCopiedPathway(null), 2000)
@@ -28,7 +30,7 @@ function App() {
         </p>
         <p class="text-gray-500 text-sm mb-10">
           The links below update within minutes of the ics link provided by the
-          university changing. Therefore the only limitation on how up-to-date
+          university updating. Therefore the only limitation on how up-to-date
           they are is how often your calendar app refreshes subscribed calendars.
           Google Calendar and Outlook will refresh around once a day. Apple calendar
           will depend on user settings.
@@ -43,7 +45,7 @@ function App() {
                     Pathway {pathway}
                   </h3>
                   <p class="text-xs text-gray-500 font-mono">
-                    {import.meta.env.VITE_SITE_URL}/griffiths-medical-calendar-2026?pathway={pathway}
+                    {import.meta.env.VITE_SITE_URL}{ENDPOINT}?pathway={pathway}&year=2026&cohort=sc
                   </p>
                 </div>
                 <button

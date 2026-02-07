@@ -9,15 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as GriffithsMedicalCalendar2026RouteImport } from './routes/griffiths-medical-calendar-2026'
+import { Route as IcsRouteImport } from './routes/ics'
 import { Route as IndexRouteImport } from './routes/index'
 
-const GriffithsMedicalCalendar2026Route =
-  GriffithsMedicalCalendar2026RouteImport.update({
-    id: '/griffiths-medical-calendar-2026',
-    path: '/griffiths-medical-calendar-2026',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const IcsRoute = IcsRouteImport.update({
+  id: '/ics',
+  path: '/ics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -26,37 +25,37 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/griffiths-medical-calendar-2026': typeof GriffithsMedicalCalendar2026Route
+  '/ics': typeof IcsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/griffiths-medical-calendar-2026': typeof GriffithsMedicalCalendar2026Route
+  '/ics': typeof IcsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/griffiths-medical-calendar-2026': typeof GriffithsMedicalCalendar2026Route
+  '/ics': typeof IcsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/griffiths-medical-calendar-2026'
+  fullPaths: '/' | '/ics'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/griffiths-medical-calendar-2026'
-  id: '__root__' | '/' | '/griffiths-medical-calendar-2026'
+  to: '/' | '/ics'
+  id: '__root__' | '/' | '/ics'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  GriffithsMedicalCalendar2026Route: typeof GriffithsMedicalCalendar2026Route
+  IcsRoute: typeof IcsRoute
 }
 
 declare module '@tanstack/solid-router' {
   interface FileRoutesByPath {
-    '/griffiths-medical-calendar-2026': {
-      id: '/griffiths-medical-calendar-2026'
-      path: '/griffiths-medical-calendar-2026'
-      fullPath: '/griffiths-medical-calendar-2026'
-      preLoaderRoute: typeof GriffithsMedicalCalendar2026RouteImport
+    '/ics': {
+      id: '/ics'
+      path: '/ics'
+      fullPath: '/ics'
+      preLoaderRoute: typeof IcsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -71,7 +70,7 @@ declare module '@tanstack/solid-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  GriffithsMedicalCalendar2026Route: GriffithsMedicalCalendar2026Route,
+  IcsRoute: IcsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,17 +1,22 @@
 import { createFileRoute } from '@tanstack/solid-router'
 
-const ICS_URL =
-  'https://outlook.office365.com/owa/calendar/5479c4c9aea84aa1bfc94f2f7f04b948@griffith.edu.au/a34e5d521f8a46539b841149bb8873fb1914797712579501563/calendar.ics'
+const ICS_URLS: Record<string, Record<string, string>> = {
+  '2026': {
+    'sc': 'https://outlook.office365.com/owa/calendar/5479c4c9aea84aa1bfc94f2f7f04b948@griffith.edu.au/a34e5d521f8a46539b841149bb8873fb1914797712579501563/calendar.ics'
+  }
+}
 
-let cachedIcs: { text: string; fetchedAt: number } | null = null
+const cache = new Map<string, { text: string; fetchedAt: number }>()
 const CACHE_TTL = 1000 * 60 * 1 // 1 minute
 
-export const Route = createFileRoute('/griffiths-medical-calendar-2026')({
+export const Route = createFileRoute('/ics')({
   server: {
     handlers: {
       GET: async ({ request }) => {
         const url = new URL(request.url)
         const pathway = Number(url.searchParams.get('pathway'))
+        const year = url.searchParams.get('year')
+        const cohort = url.searchParams.get('cohort')
 
         if (
           !pathway ||
@@ -25,11 +30,29 @@ export const Route = createFileRoute('/griffiths-medical-calendar-2026')({
           )
         }
 
+        if (!year || !cohort) {
+          return new Response(
+            'year and cohort query parameters are required',
+            { status: 400 },
+          )
+        }
+
+        const icsUrl = ICS_URLS[year]?.[cohort]
+        if (!icsUrl) {
+          return new Response(
+            `no calendar found for year=${year} cohort=${cohort}`,
+            { status: 404 },
+          )
+        }
+
+        const cacheKey = `${year}:${cohort}`
+        const cached = cache.get(cacheKey)
+
         let icsText: string
-        if (cachedIcs && Date.now() - cachedIcs.fetchedAt < CACHE_TTL) {
-          icsText = cachedIcs.text
+        if (cached && Date.now() - cached.fetchedAt < CACHE_TTL) {
+          icsText = cached.text
         } else {
-          const response = await fetch(ICS_URL)
+          const response = await fetch(icsUrl)
           if (!response.ok) {
             return new Response(
               'Failed to fetch calendar data from upstream',
@@ -37,7 +60,7 @@ export const Route = createFileRoute('/griffiths-medical-calendar-2026')({
             )
           }
           icsText = await response.text()
-          cachedIcs = { text: icsText, fetchedAt: Date.now() }
+          cache.set(cacheKey, { text: icsText, fetchedAt: Date.now() })
         }
 
         const filtered = filterIcsByPathway(icsText, pathway)
@@ -45,7 +68,7 @@ export const Route = createFileRoute('/griffiths-medical-calendar-2026')({
         return new Response(filtered, {
           headers: {
             'Content-Type': 'text/calendar; charset=utf-8',
-            'Content-Disposition': `attachment; filename="griffiths-medical-calendar-2026-pathway-${pathway}.ics"`,
+            'Content-Disposition': `attachment; filename="griffiths-medical-calendar-${year}-${cohort}-pathway-${pathway}.ics"`,
           },
         })
       },
@@ -79,6 +102,13 @@ function filterIcsByPathway(icsText: string, pathway: number): string {
       headerLines.push(line)
     } else {
       footerLines.push(line)
+    }
+  }
+
+  for (let i = 0; i < headerLines.length; i++) {
+    if (headerLines[i].startsWith('X-WR-CALNAME:')) {
+      headerLines[i] = `X-WR-CALNAME:[Pathway=${pathway}] ${headerLines[i].substring('X-WR-CALNAME:'.length)}`
+      break
     }
   }
 
