@@ -15,7 +15,7 @@ export const Route = createFileRoute('/ics')({
       GET: async ({ request }) => {
         const url = new URL(request.url)
         const pathway = Number(url.searchParams.get('pathway'))
-        const year = url.searchParams.get('year')
+        const year = url.searchParams.get('year') || url.searchParams.get('yearStarted')
         const cohort = url.searchParams.get('cohort')
 
         if (

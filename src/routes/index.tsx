@@ -10,7 +10,7 @@ function App() {
   const [copiedPathway, setCopiedPathway] = createSignal<number | null>(null)
 
   const copyLink = (pathway: number) => {
-    const url = `${import.meta.env.VITE_SITE_URL}${ENDPOINT}?pathway=${pathway}&year=2026&cohort=sc`
+    const url = `${import.meta.env.VITE_SITE_URL}${ENDPOINT}?pathway=${pathway}&yearStarted=2026&cohort=sc`
     navigator.clipboard.writeText(url)
     setCopiedPathway(pathway)
     setTimeout(() => setCopiedPathway(null), 2000)
@@ -45,7 +45,7 @@ function App() {
                     Pathway {pathway}
                   </h3>
                   <p class="text-xs text-gray-500 font-mono">
-                    {import.meta.env.VITE_SITE_URL}{ENDPOINT}?pathway={pathway}&year=2026&cohort=sc
+                    {import.meta.env.VITE_SITE_URL}{ENDPOINT}?pathway={pathway}&yearStarted=2026&cohort=sc
                   </p>
                 </div>
                 <button
